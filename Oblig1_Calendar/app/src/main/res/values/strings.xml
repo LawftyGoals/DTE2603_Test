@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Oblig1_Calendar</string>
+    <string name="January">Januar</string>
+    <string name="February">Februar</string>
+    <string name="March">Mars</string>
+    <string name="April">April</string>
+    <string name="May">Mai</string>
+    <string name="June">Juni</string>
+    <string name="July">Juli</string>
+    <string name="August">August</string>
+    <string name="September">September</string>
+    <string name="October">Oktober</string>
+    <string name="November">November</string>
+    <string name="December">Desember</string>
+</resources>
