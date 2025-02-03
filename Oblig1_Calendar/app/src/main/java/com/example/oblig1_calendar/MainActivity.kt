@@ -2,7 +2,6 @@ package com.example.oblig1_calendar
 
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,11 +14,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,10 +33,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,10 +47,8 @@ import com.example.oblig1_calendar.ui.theme.Oblig1_CalendarTheme
 import java.util.Calendar.DATE
 import java.util.Calendar.DAY_OF_WEEK
 import java.util.Calendar.DAY_OF_YEAR
-import java.util.Calendar.MONTH
 
 import java.util.Calendar.WEEK_OF_YEAR
-import java.util.Calendar.YEAR
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,9 +83,9 @@ fun CalendarBody(modifier: Modifier = Modifier, month: Int, year: Int) {
 
     Box(modifier.fillMaxWidth()){
 
-        Image(modifier = Modifier.fillMaxWidth(), contentScale = ContentScale.FillWidth  , painter = bgImage, contentDescription = null, alpha= 0.5f)
+        Image(modifier = Modifier.matchParentSize(), contentScale = ContentScale.FillHeight  , painter = bgImage, contentDescription = null, alpha= 0.5f)
 
-        Column (horizontalAlignment = Alignment.CenterHorizontally, modifier=Modifier.fillMaxWidth()){
+        Column ( horizontalAlignment = Alignment.CenterHorizontally, modifier=Modifier.fillMaxWidth()){
 
             CalendarHeader(calendar = calendar)
             DateRow()
@@ -194,15 +194,22 @@ fun CalendarFooter(modifier: Modifier = Modifier, month: Int, year: Int){
         .border(width = 2.dp, color = Color.Black)
         .background(color = Color(1f, 1f, 1f, 0.8f))
         .padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally){
-        Text(text = "Denne måneden har $workDays arbeidsdager.", fontSize = 12.sp)
-        Text(text = "Klikk på en dag for å finne antall dager siden 1. januar.")
+        Text(text = stringResource(R.string.count_workdays, workDays), fontSize = 12.sp)
+        Text(text = stringResource(R.string.day_since_jan_first), textAlign = TextAlign.Center, fontSize = 12.sp)
     }
 
 }
 
 @Composable
 fun DateRow(){
-    val dateNames = listOf("","M", "T", "W", "T", "F", "S", "S")
+    val dateNames = listOf("", stringResource(R.string.monday_short),
+        stringResource(R.string.tuesday_short),
+        stringResource(R.string.wednesday_short),
+        stringResource(R.string.thursday_short), stringResource(R.string.firday_short),
+        stringResource(
+            R.string.saturday_short
+        ), stringResource(R.string.sunday_short)
+    )
 
     LazyVerticalGrid(GridCells.Fixed(8)) {
         items(8){
@@ -214,9 +221,11 @@ fun DateRow(){
 @Composable
 fun InfoContainer(text: String){
     Row(Modifier
+        .fillMaxSize()
         .border(width = 1.dp, color = Color.Black)
         .background(color = typeCellCheck(text))
-        .fillMaxSize(), horizontalArrangement = Arrangement.Center){
+        .height(45.dp)
+        , horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
             Text( text = text)
 
     }
@@ -224,7 +233,6 @@ fun InfoContainer(text: String){
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateContainer(text: String, date: Int, month: Int, year: Int){
 
@@ -235,10 +243,9 @@ fun DateContainer(text: String, date: Int, month: Int, year: Int){
 
     var showDialogue by remember { mutableStateOf(false) }
 
-
-
     Row(Modifier
-        .fillMaxSize()
+        .fillMaxWidth()
+        .height(45.dp)
         .border(width = 1.dp, color = Color.Black)
         .background(color = typeCellCheck(text)), horizontalArrangement = Arrangement.Center){
         TextButton(onClick = {showDialogue = true}) {
@@ -248,15 +255,30 @@ fun DateContainer(text: String, date: Int, month: Int, year: Int){
     }
 
     if(showDialogue){
-        BasicAlertDialog(onDismissRequest = {showDialogue = false}) {
-            Column(Modifier.background(Color.White)) {
-                Text(text="Det er $dayOfYear siden 1. januar.")
-                Button(onClick = { showDialogue = false }) {
-                    Text("Close")
-                }
-            }
+        DaysAlert(onDismissRequest = {showDialogue = false}, dayOfYear = dayOfYear)
+    }
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DaysAlert(onDismissRequest: ()->Unit, dayOfYear: Int){
+
+    BasicAlertDialog(onDismissRequest = { onDismissRequest() }) {
+        Column(Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.White)
+            .padding(8.dp), horizontalAlignment = Alignment.End) {
+            Column(Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp), horizontalAlignment = Alignment.CenterHorizontally){
+                Text(text= stringResource(R.string.count_since_jan_first, dayOfYear))
+            }
+            Button(onClick = { onDismissRequest() }) {
+                Text(stringResource(R.string.close))
+            }
         }
+
     }
 
 }
@@ -290,19 +312,6 @@ fun getNumberOfDaysInMonth(month: Int, year: Int): Int{
     tempCalendar.add(Calendar.DATE, -1)
 
     return tempCalendar.get(DATE)
-}
-
-fun getNumberOfWeeks(month: Int, year: Int): Int{
-    val tempCalendar = Calendar.getInstance()
-    tempCalendar.clear()
-    tempCalendar.set(year, month, 1)
-    val firstWeek = tempCalendar.get(WEEK_OF_YEAR)
-
-    tempCalendar.add(Calendar.MONTH, 1)
-    tempCalendar.add(Calendar.DATE, -1)
-    val lastWeek = tempCalendar.get(WEEK_OF_YEAR)
-
-    return lastWeek - firstWeek
 }
 
 fun addPaddingToDates(numberOfDaysInMonth: Int, dayOfWeek: Int  ): List<String>{

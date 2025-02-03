@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">Oblig1_Calendar</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">Oblig1_Calendar</string>
     <string name="January">Januar</string>
     <string name="February">Februar</string>
     <string name="March">Mars</string>
@@ -12,4 +12,15 @@
     <string name="October">Oktober</string>
     <string name="November">November</string>
     <string name="December">Desember</string>
+    <string name="close">Lukk</string>
+    <string name="day_since_jan_first">Klikk på en dag for å finne antall dager siden 1. januar.</string>
+    <string name="count_since_jan_first">Det er %1$s siden 1. januar.</string>
+    <string name="count_workdays">Denne måneden har %1$s arbeidsdager.</string>
+    <string name="monday_short">M</string>
+    <string name="tuesday_short">T</string>
+    <string name="wednesday_short">W</string>
+    <string name="thursday_short">T</string>
+    <string name="firday_short">F</string>
+    <string name="saturday_short">S</string>
+    <string name="sunday_short">S</string>
 </resources>
