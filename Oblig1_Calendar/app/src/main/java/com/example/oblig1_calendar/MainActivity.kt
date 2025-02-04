@@ -1,10 +1,11 @@
 package com.example.oblig1_calendar
 
-import android.icu.util.Calendar
+import java.util.Calendar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,8 +48,9 @@ import com.example.oblig1_calendar.ui.theme.Oblig1_CalendarTheme
 import java.util.Calendar.DATE
 import java.util.Calendar.DAY_OF_WEEK
 import java.util.Calendar.DAY_OF_YEAR
-
+import java.util.Calendar.MONTH
 import java.util.Calendar.WEEK_OF_YEAR
+import java.util.Calendar.YEAR
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +67,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 @Composable
@@ -146,11 +149,7 @@ fun WeekNumbersAndDates(firstWeekNumber: Int, dates: List<String>, month: Int, y
                 DateContainer(dates[it + 35], it + 35, month, year)
             }
         }
-
-
-
     }
-
 }
 
 @Composable
@@ -158,8 +157,8 @@ fun CalendarHeader(modifier: Modifier = Modifier, calendar: Calendar){
 
     val months = listOf(R.string.January, R.string.February, R.string.March, R.string.April, R.string.May, R.string.June, R.string.July, R.string.August, R.string.September, R.string.October, R.string.November, R.string.December)
 
-    val month = calendar.get(Calendar.MONTH)
-    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(MONTH)
+    val year = calendar.get(YEAR)
 
     Column(modifier
         .fillMaxWidth()
@@ -174,20 +173,7 @@ fun CalendarHeader(modifier: Modifier = Modifier, calendar: Calendar){
 @Composable
 fun CalendarFooter(modifier: Modifier = Modifier, month: Int, year: Int){
 
-    val numberOfDays = getNumberOfDaysInMonth(month, year)
-    val calendar = Calendar.getInstance()
-    calendar.clear()
-    calendar.set(year, month, 1)
-
-    var workDays = 0
-
-    for(date in 1..numberOfDays){
-        calendar.set(DATE, date)
-        val dayOfWeek = calendar.get(DAY_OF_WEEK)
-        if(dayOfWeek != 1 && dayOfWeek != 7){
-            workDays++
-        }
-    }
+    val workDays = countWorkDays(month, year)
 
     Column(modifier
         .fillMaxWidth()
@@ -236,10 +222,7 @@ fun InfoContainer(text: String){
 @Composable
 fun DateContainer(text: String, date: Int, month: Int, year: Int){
 
-    val calendar = Calendar.getInstance()
-    calendar.clear()
-    calendar.set(year, month, date)
-    val dayOfYear = calendar.get(DAY_OF_YEAR)
+    val dayOfYear = countDayOfYear(date, month, year)
 
     var showDialogue by remember { mutableStateOf(false) }
 
@@ -308,8 +291,8 @@ fun getNumberOfDaysInMonth(month: Int, year: Int): Int{
     val tempCalendar = Calendar.getInstance()
     tempCalendar.clear()
     tempCalendar.set(year, month, 1)
-    tempCalendar.add(Calendar.MONTH, 1)
-    tempCalendar.add(Calendar.DATE, -1)
+    tempCalendar.add(MONTH, 1)
+    tempCalendar.add(DATE, -1)
 
     return tempCalendar.get(DATE)
 }
@@ -337,7 +320,32 @@ fun addPaddingToDates(numberOfDaysInMonth: Int, dayOfWeek: Int  ): List<String>{
     if(total > 28){
         dates = dates + List(if (total > 35) 42 else 35 - total) {""}
     }
-
     return dates
+}
 
+@VisibleForTesting
+fun countWorkDays(month: Int, year: Int, calendar: Calendar = Calendar.getInstance()): Int {
+    val numberOfDays = getNumberOfDaysInMonth(month, year)
+    calendar.clear()
+    calendar.set(year, month, 1)
+
+    var workDays = 0
+
+    for(date in 1..numberOfDays){
+        calendar.set(DATE, date)
+        val dayOfWeek = calendar.get(DAY_OF_WEEK)
+        if(dayOfWeek != 1 && dayOfWeek != 7){
+            workDays++
+        }
+    }
+
+    return workDays
+}
+
+@VisibleForTesting
+fun countDayOfYear(date: Int, month: Int, year: Int, calendar: Calendar = Calendar.getInstance()): Int{
+    calendar.clear()
+    calendar.set(year, month, date)
+
+    return calendar.get(DAY_OF_YEAR)
 }
