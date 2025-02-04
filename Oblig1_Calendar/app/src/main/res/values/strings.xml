@@ -14,7 +14,7 @@
     <string name="December">Desember</string>
     <string name="close">Lukk</string>
     <string name="day_since_jan_first">Klikk på en dag for å finne antall dager siden 1. januar.</string>
-    <string name="count_since_jan_first">Det er %1$s siden 1. januar.</string>
+    <string name="count_since_jan_first">Det er %1$s dager siden 1. januar.</string>
     <string name="count_workdays">Denne måneden har %1$s arbeidsdager.</string>
     <string name="monday_short">M</string>
     <string name="tuesday_short">T</string>

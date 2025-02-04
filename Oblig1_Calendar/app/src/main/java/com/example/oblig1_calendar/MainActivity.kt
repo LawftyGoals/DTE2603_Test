@@ -232,7 +232,7 @@ fun DateContainer(text: String, date: Int, month: Int, year: Int){
         .border(width = 1.dp, color = Color.Black)
         .background(color = typeCellCheck(text)), horizontalArrangement = Arrangement.Center){
         TextButton(onClick = {showDialogue = true}) {
-            Text( text = text)
+            Text(color = Color.White, text = text)
 
         }
     }
@@ -268,8 +268,7 @@ fun DaysAlert(onDismissRequest: ()->Unit, dayOfYear: Int){
 
 @Preview(showBackground = true)
 @Composable
-fun CalendarApp(modifier: Modifier = Modifier, month: Int = 5, year: Int = 2026) {
-
+fun CalendarApp(modifier: Modifier = Modifier, month: Int = 5, year: Int = 2025) {
     CalendarBody(modifier
         .fillMaxSize()
         .wrapContentSize(Alignment.Center), month, year)
