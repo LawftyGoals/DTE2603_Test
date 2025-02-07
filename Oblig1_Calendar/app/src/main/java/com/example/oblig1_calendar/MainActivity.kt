@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     CalendarApp(Modifier
                         .fillMaxSize()
-                        .wrapContentSize(Alignment.Center))
+                        .wrapContentSize(Alignment.Center), 6, 2029)
                 }
 
             }
@@ -111,25 +111,36 @@ fun WeekNumbersAndDates(firstWeekNumber: Int, dates: List<String>, month: Int, y
         }
 
         items(7){
-            DateContainer(dates[it], it, month, year)
+            if(dates[it] == "") {
+                InfoContainer("")
+            }
+            else{
+                DateContainer(dates[it], month, year)
+            }
         }
 
         item { InfoContainer((firstWeekNumber + 1).toString())}
 
         items(7 ){
-            DateContainer(dates[it + 7], it + 7, month, year)
+
+
+                DateContainer(dates[it + 7],  month, year)
         }
 
         item { InfoContainer((firstWeekNumber + 2).toString())}
 
         items(7 ){
-            DateContainer(dates[it + 14], it + 14, month, year)
+
+
+                DateContainer(dates[it + 14], month, year)
+
         }
 
         item { InfoContainer((firstWeekNumber + 3).toString())}
 
         items(7 ){
-            DateContainer(dates[it + 21], it + 21, month, year)
+
+                DateContainer(dates[it + 21], month, year)
         }
 
         if(dates.count() > 28){
@@ -137,7 +148,13 @@ fun WeekNumbersAndDates(firstWeekNumber: Int, dates: List<String>, month: Int, y
             item { InfoContainer((firstWeekNumber + 4).toString())}
 
             items(7 ){
-                DateContainer(dates[it + 28], it + 28, month, year)
+
+                if(dates[it +28] == "") {
+                    InfoContainer("")
+                }
+                else{
+                    DateContainer(dates[it + 28], month, year)
+                }
             }
         }
 
@@ -146,7 +163,13 @@ fun WeekNumbersAndDates(firstWeekNumber: Int, dates: List<String>, month: Int, y
             item { InfoContainer((firstWeekNumber + 5).toString())}
 
             items(7 ){
-                DateContainer(dates[it + 35], it + 35, month, year)
+
+                if(dates[it + 35] == "") {
+                    InfoContainer("")
+                }
+                else{
+                    DateContainer(dates[it + 35], month, year)
+                }
             }
         }
     }
@@ -220,9 +243,10 @@ fun InfoContainer(text: String){
 }
 
 @Composable
-fun DateContainer(text: String, date: Int, month: Int, year: Int){
+fun DateContainer(text: String, month: Int, year: Int){
 
-    val dayOfYear = countDayOfYear(date, month, year)
+
+    val dayOfYear = countDayOfYear(text.toIntOrNull(), month, year)
 
     var showDialogue by remember { mutableStateOf(false) }
 
@@ -231,7 +255,7 @@ fun DateContainer(text: String, date: Int, month: Int, year: Int){
         .height(45.dp)
         .border(width = 1.dp, color = Color.Black)
         .background(color = typeCellCheck(text)), horizontalArrangement = Arrangement.Center){
-        TextButton(onClick = {showDialogue = true}) {
+        TextButton(onClick = { if(text != "") showDialogue = true}) {
             Text(color = Color.White, text = text)
 
         }
@@ -342,7 +366,11 @@ fun countWorkDays(month: Int, year: Int, calendar: Calendar = Calendar.getInstan
 }
 
 @VisibleForTesting
-fun countDayOfYear(date: Int, month: Int, year: Int, calendar: Calendar = Calendar.getInstance()): Int{
+fun countDayOfYear(date: Int?, month: Int, year: Int, calendar: Calendar = Calendar.getInstance()): Int{
+    if (date == null){
+        return 0
+    }
+
     calendar.clear()
     calendar.set(year, month, date)
 
